@@ -1,0 +1,20 @@
+{
+	"name": "AzureDatabricksDeltaLake1_ls",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricksDeltaLake",
+		"typeProperties": {
+			"domain": "https://adb-441565169221590.10.azuredatabricks.net",
+			"clusterId": "0406-071658-zhzjiy3c",
+			"accessToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "tt_hc_ak_kv_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "db-hc-adb-ws-at"
+			}
+		}
+	}
+}

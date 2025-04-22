@@ -1,0 +1,21 @@
+{
+	"name": "ds_lookup_adls_sql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_for_lookup_file_adls_sql_db",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Lookup_file_table_mapping.json",
+				"folderPath": "Lookup",
+				"fileSystem": "raw-data-for-sql-database"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,301 @@
+{
+	"name": "pl_copy_from_emr",
+	"properties": {
+		"activities": [
+			{
+				"name": "If condition child pipeline",
+				"type": "IfCondition",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(pipeline().parameters.Load_Type,'Full')\n",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "fetch logs",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureDatabricksDeltaLakeSource",
+									"query": {
+										"value": "@concat(\n    'SELECT COALESCE(CAST(MAX(loaddate) AS DATE), ''1900-01-01'') AS last_fetched_date FROM audit.load_logs ',\n    'WHERE data_source = ''', pipeline().parameters.datasource, ''' ',\n    'AND tablename = ''', pipeline().parameters.tablename, ''''\n)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "AzureDatabricksDeltaLakeDataset1",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema_name": "'aa'",
+										"table_name": "'aa'"
+									}
+								},
+								"firstRowOnly": true
+							}
+						},
+						{
+							"name": "incremental load cp",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "fetch logs",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('select *,''',pipeline().parameters.datasource,''' as datasource from\n ',pipeline().parameters.tablename,' where ',pipeline().parameters.watermark,' >=\n ''',activity('fetch logs').output.firstRow.last_fetched_date,'''')",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "generic_sql_db",
+									"type": "DatasetReference",
+									"parameters": {
+										"db_name": {
+											"value": "@pipeline().parameters.database",
+											"type": "Expression"
+										},
+										"schema_name": "@split(pipeline().parameters.tablename, '.')[0]",
+										"table_name": {
+											"value": "@split(pipeline().parameters.tablename, '.')[1]",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "generic_adls_parquet_ds",
+									"type": "DatasetReference",
+									"parameters": {
+										"file_path": "@pipeline().parameters.targetpath",
+										"file_name": "@split(pipeline().parameters.tablename, '.')[1]",
+										"container": "bronze"
+									}
+								}
+							]
+						},
+						{
+							"name": "insert logs Inc load",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "incremental load cp",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureDatabricksDeltaLakeSource",
+									"query": {
+										"value": "@concat(\n    'INSERT INTO audit.load_logs(data_source, tablename, numberofrowscopied, watermarkcolumnname, loaddate) VALUES (''',\n    pipeline().parameters.datasource, ''', ''',\n    pipeline().parameters.tablename, ''', ''',\n    string(activity('incremental load cp').output.rowsCopied), ''', ''',\n    pipeline().parameters.watermark, ''', ''',\n    utcNow(), ''')'\n)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "AzureDatabricksDeltaLakeDataset1",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema_name": "'aa'",
+										"table_name": "'aa'"
+									}
+								}
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Full Load CP",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@concat('select * ,''', pipeline().parameters.datasource,''' as datasource from ',pipeline().parameters.tablename)",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "generic_sql_db",
+									"type": "DatasetReference",
+									"parameters": {
+										"db_name": {
+											"value": "@pipeline().parameters.database",
+											"type": "Expression"
+										},
+										"schema_name": {
+											"value": "@split(pipeline().parameters.tablename,'.')[0]",
+											"type": "Expression"
+										},
+										"table_name": "@split(pipeline().parameters.tablename, '.')[1]"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "generic_adls_parquet_ds",
+									"type": "DatasetReference",
+									"parameters": {
+										"file_path": "@pipeline().parameters.targetpath",
+										"file_name": {
+											"value": "@split(pipeline().parameters.tablename, '.')[1]",
+											"type": "Expression"
+										},
+										"container": "bronze"
+									}
+								}
+							]
+						},
+						{
+							"name": "Insert Logs Full Load",
+							"type": "Lookup",
+							"dependsOn": [
+								{
+									"activity": "Full Load CP",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureDatabricksDeltaLakeSource",
+									"query": {
+										"value": "@concat(\n    'INSERT INTO audit.load_logs(data_source, tablename, numberofrowscopied, watermarkcolumnname, loaddate) VALUES (''',\n    pipeline().parameters.datasource, ''',''',\n    pipeline().parameters.tablename, ''',''',\n    string(activity('Full Load CP').output.rowsCopied), ''',''',\n    pipeline().parameters.watermark, ''',''',\n    utcNow(), ''')'\n)",
+										"type": "Expression"
+									}
+								},
+								"dataset": {
+									"referenceName": "AzureDatabricksDeltaLakeDataset1",
+									"type": "DatasetReference",
+									"parameters": {
+										"schema_name": "'aa'",
+										"table_name": "'aa'"
+									}
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Load_Type": {
+				"type": "string"
+			},
+			"database": {
+				"type": "string"
+			},
+			"tablename": {
+				"type": "string"
+			},
+			"datasource": {
+				"type": "string"
+			},
+			"targetpath": {
+				"type": "string"
+			},
+			"watermark": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-04-13T07:08:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

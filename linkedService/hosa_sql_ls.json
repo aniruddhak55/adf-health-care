@@ -1,0 +1,29 @@
+{
+	"name": "hosa_sql_ls",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"db_name": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"server": "trendytech-sqlserver-ak.database.windows.net",
+			"database": "@{linkedService().db_name}",
+			"encrypt": "mandatory",
+			"trustServerCertificate": false,
+			"authenticationType": "SQL",
+			"userName": "aniruddhaka",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "tt_hc_ak_kv_ls",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "azure-sql-db-pass"
+			}
+		}
+	}
+}

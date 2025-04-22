@@ -1,0 +1,332 @@
+{
+	"name": "pl_silver_to_gold",
+	"properties": {
+		"activities": [
+			{
+				"name": "slv-Transacations",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/Transactions"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-Departments",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/Departments_F"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-npi",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/NPI"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-icd-codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/ICD Code"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-providers",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/Providers_F"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-cpt-codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/CPT codes"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-claims",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/Claims"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "slv-encounters",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/3.Silver/Encounters"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld_transactions",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-Transacations",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/fact_transaction"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld-departments",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-Departments",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/dim_department"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld-npi",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-npi",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/dim_npi"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld-icd-codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-icd-codes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/dim_icd_code"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld-providers",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-providers",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/dim_provider"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "gld-cpt-codes",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "slv-cpt-codes",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Users/aniruddha.kulkarni10@gmail.com/4.Gold/dim_cpt_code"
+				},
+				"linkedServiceName": {
+					"referenceName": "tt_hc_ak_adb_ls",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-04-22T12:53:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

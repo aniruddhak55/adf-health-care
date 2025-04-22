@@ -1,0 +1,9 @@
+{
+	"name": "TT-healthcare-proj-ak",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3bf3ffa3-5a95-498e-b1bd-324846af63d1",
+		"tenantId": "4d46a36e-95b3-48a5-8560-bd39d8da9b02"
+	}
+}
