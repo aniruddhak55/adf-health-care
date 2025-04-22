@@ -1,0 +1,98 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "TT-healthcare-proj-ak"
+		},
+		"ls_for_lookup_file_adls_sql_db_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_for_lookup_file_adls_sql_db'"
+		},
+		"AzureDataLakeStorage1_ls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ttadlsdevnewak.dfs.core.windows.net/"
+		},
+		"hosa_sql_ls_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "trendytech-sqlserver-ak.database.windows.net"
+		},
+		"hosa_sql_ls_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "@{linkedService().db_name}"
+		},
+		"hosa_sql_ls_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "aniruddhaka"
+		},
+		"ls_for_lookup_file_adls_sql_db_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://ttadlsdevnewak.dfs.core.windows.net/"
+		},
+		"tt_hc_ak_adb_ls_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0406-071658-zhzjiy3c"
+		},
+		"tt_hc_ak_kv_ls_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://ttazureprojak.vault.azure.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "TT-healthcare-proj-ak_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"ls_for_lookup_file_adls_sql_db_accountKey": {
+						"value": "[parameters('ls_for_lookup_file_adls_sql_db_accountKey')]"
+					},
+					"ls_for_lookup_file_adls_sql_db_properties_typeProperties_url": {
+						"value": "[parameters('ls_for_lookup_file_adls_sql_db_properties_typeProperties_url')]"
+					},
+					"tt_hc_ak_kv_ls_properties_typeProperties_baseUrl": {
+						"value": "[parameters('tt_hc_ak_kv_ls_properties_typeProperties_baseUrl')]"
+					},
+					"AzureDataLakeStorage1_ls_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_ls_properties_typeProperties_url')]"
+					},
+					"hosa_sql_ls_properties_typeProperties_server": {
+						"value": "[parameters('hosa_sql_ls_properties_typeProperties_server')]"
+					},
+					"hosa_sql_ls_properties_typeProperties_database": {
+						"value": "[parameters('hosa_sql_ls_properties_typeProperties_database')]"
+					},
+					"hosa_sql_ls_properties_typeProperties_userName": {
+						"value": "[parameters('hosa_sql_ls_properties_typeProperties_userName')]"
+					},
+					"tt_hc_ak_adb_ls_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('tt_hc_ak_adb_ls_properties_typeProperties_existingClusterId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "TT-healthcare-proj-ak"
+		},
+		"ls_for_lookup_file_adls_sql_db_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_ls_properties_typeProperties_url": {
+			"value": "https://ttadlsdevnewak.dfs.core.windows.net/"
+		},
+		"hosa_sql_ls_properties_typeProperties_server": {
+			"value": "trendytech-sqlserver-ak.database.windows.net"
+		},
+		"hosa_sql_ls_properties_typeProperties_database": {
+			"value": "@{linkedService().db_name}"
+		},
+		"hosa_sql_ls_properties_typeProperties_userName": {
+			"value": "aniruddhaka"
+		},
+		"ls_for_lookup_file_adls_sql_db_properties_typeProperties_url": {
+			"value": "https://ttadlsdevnewak.dfs.core.windows.net/"
+		},
+		"tt_hc_ak_adb_ls_properties_typeProperties_existingClusterId": {
+			"value": "0406-071658-zhzjiy3c"
+		},
+		"tt_hc_ak_kv_ls_properties_typeProperties_baseUrl": {
+			"value": "https://ttazureprojak.vault.azure.net/"
+		}
+	}
+}
